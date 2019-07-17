@@ -37,7 +37,12 @@ class CAVSAlgorithm(object):
         invert = False
         res = []
         for tg in tg_list:
+            if criteria_dict is None:
+                res.append(tg)
+                continue
+
             match = 0
+
             for k,v in criteria_dict.iteritems():
                 if k.startswith("!"):
                     k = k[1:]
@@ -56,7 +61,6 @@ class CAVSAlgorithm(object):
             # All criteria have to match
             if match == len(criteria_dict.keys()):
                 res.append(tg)
-        #print res
         return res
 
     @property
