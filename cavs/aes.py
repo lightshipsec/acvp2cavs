@@ -200,22 +200,32 @@ class AESCFB(AES):
     def generate_legacy_test_case_record(self, group, test):
         """CFB1 will output as binary bits. Which is super annoying.
         I have no idea what the relationship between payloadLen and the CT/PT is.
-        Based on CAVS output and NIST 800-38A, it *appears* that it is the numbre
+        Based on CAVS output and NIST 800-38A, it *appears* that it is the number
         of bits in the CT/PT which are actually subjected to the cipher. The
         remaining bits are simply thrown away.  Thus, we generate a variable-sized
-        bitmask based on the payloadLen, then mask those bits from the PT/CT."""
+        bitmask based on the payloadLen, then mask those bits from the PT/CT.
+        Note that the ACVP appears to be big-endian bit strings, whereas CAVS is
+        little-endian?  Not sure but it makes sense considering the values. The ACVP
+        spec doesn't discuss whether these are big endian or not but I read that
+        the SHA1 bit-oriented message tests are big-endian and thought this might also be the
+        case here.
+        """
         if group['direction'] == 'encrypt':
             if self._mode.lower() == 'cfb1':
+                # Note that we have reversed the string in here [::-1] and then masked it
+                # This emulates a big-endian to little-endian xform.
                 text = "PLAINTEXT = {pt:0{width}b}".format(
-                    pt=int(test['pt'], 16) & int("0b"+('1'*(int(test['payloadLen']))),2),
+                    pt=int(test['pt'][::-1], 16) & int("0b"+('1'*(int(test['payloadLen']))),2),
                     width=int(test['payloadLen'])
                 )
             else:
                 text = "PLAINTEXT = {pt}".format(pt=test['pt'].lower())
         else:
             if self._mode.lower() == 'cfb1':
+                # Note that we have reversed the string in here [::-1] and then masked it
+                # This emulates a big-endian to little-endian xform.
                 text = "CIPHERTEXT = {ct:0{width}b}".format(
-                    ct=int(test['ct'], 16) & int("0b"+('1'*(int(test['payloadLen']))),2),
+                    ct=int(test['ct'][::-1], 16) & int("0b"+('1'*(int(test['payloadLen']))),2),
                     width=int(test['payloadLen'])
                 )
             else:
