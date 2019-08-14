@@ -136,14 +136,3 @@ class CAVSAlgorithm(object):
 
 
 
-if __name__ == "__main__":
-    a2c = CAVSAlgorithm("AES-CBC")
-    a2c.from_acvp("\n".join(sys.stdin.readlines()))
-    # To help with debugging with pdb after reading from stdin
-    sys.stdin = open('/dev/tty')
-
-    try:
-        outdir = sys.argv[1]
-    except IndexError:
-        outdir = "."
-    a2c.to_cavs(outdir)
