@@ -35,7 +35,7 @@ class HMAC(CAVSAlgorithm):
         """
         filegroups = []
         # There is literally only one group in this file that I am aware of. The groupings are made up
-        # of the size of the underlying hash and the underlying algorithm prefix (which is dumb).
+        # of the size of the underlying hash and the underlying algorithm prefix.
         filegroups.append({
             "filename": 'HMAC.req',
             "testGroups": self.testGroups
